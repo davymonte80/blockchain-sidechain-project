@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  bor:
+    build:
+      context: .
+      dockerfile: Dockerfile.bor
+    ports:
+      - "8545:8545"
+      - "8546:8546"
+      - "30303:30303"
+    volumes:
+      - ./bor-chain:/root/.bor
+      - ./config.toml:/root/.bor/config.toml
+    command: --config /root/.bor/config.toml
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_RPC_URL=http://bor:8545
+    depends_on:
+      - bor
+
